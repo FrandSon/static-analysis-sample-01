@@ -1,67 +1,59 @@
 package ec.edu.epn;
 
 public class Pub {
-    public static final String ONE_BEER = "hansa";
-    public static final String ONE_CIDER = "grans";
-    public static final String A_PROPER_CIDER = "strongbow";
-    public static final String GT = "gt";
-    public static final String BACARDI_SPECIAL = "bacardi_special";
 
-    public int computeCost(String drink, boolean student, int amount) {
+  // Constantes Públicas de Identificadores de Bebidas (Exigido por PubPricesTest)
+  public static final String ONE_BEER = "one beer";
+  public static final String ONE_CIDER = "one cider";
+  public static final String A_PROPER_CIDER = "proper cider";
+  public static final String GT = "gt";
+  public static final String BACARDI_SPECIAL = "bacardi special";
 
-        if (amount > 2 && (drink == GT || drink == BACARDI_SPECIAL)) {
-            throw new RuntimeException("Too many drinks, max 2.");
-        }
-        int price;
-        if (drink.equals(ONE_BEER)) {
-            price = 74;
-        }
-        else if (drink.equals(ONE_CIDER)) {
-            price = 103;
-        }
-        else if (drink.equals(A_PROPER_CIDER)) price = 110;
-        else if (drink.equals(GT)) {
-            price = ingredient6() + ingredient5() + ingredient4();
-        }
-        else if (drink.equals(BACARDI_SPECIAL)) {
-            price = ingredient6()/2 + ingredient1() + ingredient2() + ingredient3();
-        }
-        else {
-            throw new RuntimeException("No such drink exists");
-        }
-        if (student && (drink == ONE_CIDER || drink == ONE_BEER || drink == A_PROPER_CIDER)) {
-            price = price - price/10;
-        }
-        return price*amount;
+  // Constantes Privadas de Precios
+  private static final int PRICE_ONE_BEER = 74;
+  private static final int PRICE_ONE_CIDER = 103;
+  private static final int PRICE_A_PROPER_CIDER = 110;
+  private static final int PRICE_GT = 115;
+  private static final int PRICE_BACARDI_SPECIAL = 127;
+
+  public int computeCost(String drink, boolean student, int amount) {
+    // Cláusula de Guarda: Límite de consumo para ciertas bebidas con alcohol fuerte
+    if (amount > 2 && (GT.equals(drink) || ONE_CIDER.equals(drink) || BACARDI_SPECIAL.equals(drink))) {
+      throw new IllegalArgumentException("Too many drinks, max 2.");
     }
 
-    //one unit of rum
-    private int ingredient1() {
-        return 65;
+    // Cláusula de Guarda: Validación de cantidad lógica
+    if (amount <= 0) {
+      throw new IllegalArgumentException("Amount must be greater than 0.");
     }
 
-    //one unit of grenadine
-    private int ingredient2() {
-        return 10;
-    }
+    int basePrice = getBasePrice(drink);
+    double discountFactor = getDiscountFactor(drink, student);
+    int finalPrice = (int) Math.round(basePrice * discountFactor);
 
-    //one unit of lime juice
-    private int ingredient3() {
-        return 10;
-    }
-    
-    //one unit of green stuff
-    private int ingredient4() {
-        return 10;
-    }
+    return finalPrice * amount;
+  }
 
-    //one unit of tonic water
-    private int ingredient5() {
-        return 20;
-    }
+  private int getBasePrice(String drink) {
+    if (ONE_BEER.equals(drink))
+      return PRICE_ONE_BEER;
+    if (ONE_CIDER.equals(drink))
+      return PRICE_ONE_CIDER;
+    if (A_PROPER_CIDER.equals(drink))
+      return PRICE_A_PROPER_CIDER;
+    if (GT.equals(drink))
+      return PRICE_GT;
+    if (BACARDI_SPECIAL.equals(drink))
+      return PRICE_BACARDI_SPECIAL;
 
-    //one unit of gin
-    private int ingredient6() {
-        return 85;
+    throw new IllegalArgumentException("No such drink exists in this pub");
+  }
+
+  private double getDiscountFactor(String drink, boolean student) {
+    // Descuento exclusivo del 10% en cerveza para estudiantes
+    if (student && ONE_BEER.equals(drink)) {
+      return 0.9;
     }
+    return 1.0;
+  }
 }

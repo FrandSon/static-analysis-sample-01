@@ -5,3 +5,5 @@ target
 
 # Snyk Security Extension - AI Rules (auto-generated)
 .github/instructions/snyk_rules.instructions.md
+sonarqube-docker/sonarqube_data/
+sonarqube-docker/postgresql_data/
